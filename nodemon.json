@@ -1,0 +1,7 @@
+{
+    "env" : {
+        "MONGO_USER": "munna_mongo",
+        "MONGO_PASSWORD": "1NS32A0GhlCt77TE",
+        "MONGO_DB": "react-graphql"
+    }
+}
