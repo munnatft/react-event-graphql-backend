@@ -12,12 +12,19 @@ const schema = buildSchema(`
 
     type User {
         _id: ID!
+        username: String!
         email: String!
         password: String
         eventsCreated: [Event!]
     }
-    type Auth {
+
+    type AuthUser {
         userId: ID!
+        username: String!
+        email: String!
+    }
+    type Auth {
+        user: AuthUser!
         token: String!
         tokenExpiration: Int!
     }
@@ -30,6 +37,10 @@ const schema = buildSchema(`
         updatedAt: String!
     }
 
+    type Message {
+        message: String!
+    }
+
     input EventInput {
         title: String!
         description: String!
@@ -38,6 +49,7 @@ const schema = buildSchema(`
     }
 
     input UserInput {
+        username: String!
         email: String!
         password: String!
     }
@@ -50,7 +62,7 @@ const schema = buildSchema(`
 
     type Mutation {
         createEvent(eventInput:EventInput): Event
-        createUser(userInput:UserInput): User
+        createUser(userInput:UserInput): Message
         bookEvent(eventId: ID!): Booking!
         cancelBooking(bookingId: ID!): Event!
     }

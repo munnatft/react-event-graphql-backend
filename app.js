@@ -10,11 +10,18 @@ const auth = require("./middleware/auth");
 const app = express();
 app.use(bodyParser.json());
 
-app.use(auth)
 
-app.get("/", (req, res, next) => {
-  res.send("Graphql with React");
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
 });
+
+app.use(auth)
 
 app.use(
   "/graphql",

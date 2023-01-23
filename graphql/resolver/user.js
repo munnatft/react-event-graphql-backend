@@ -4,21 +4,24 @@ const User = require("../../models/user");
 
 module.exports = {
   createUser: async (args) => {
-    const existingUser = await User.findOne({ email: args.userInput.email });
-    if (existingUser) {
-      throw new Error("User Already Exists!");
+    try {
+      const existingUser = await User.findOne({ email: args.userInput.email });
+      if (existingUser) {
+        throw new Error("User Already Exists!");
+      }
+      const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
+      const newUser = new User({
+        username: args.userInput.username,
+        email: args.userInput.email,
+        password: hashedPassword,
+      });
+      await newUser.save();
+      return {
+        message: "User registered successfully."
+      };
+    } catch (error) {
+      throw error;
     }
-    const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
-    const newUser = new User({
-      email: args.userInput.email,
-      password: hashedPassword,
-    });
-    const result = await newUser.save();
-    return {
-      ...result._doc,
-      _id: result.id,
-      password: null,
-    };
   },
   login: async ({ email, password }) => {
     try {
@@ -34,17 +37,22 @@ module.exports = {
         {
           userId: user.id,
           email: user.email,
+          username: user.username
         },
         "somesupersecretprivatekeytohide",
         {
-            expiresIn: "1h"
+          expiresIn: "1h",
         }
       );
       return {
-        userId: user.id,
+        user: {
+          userId: user.id,
+          username: user.username,
+          email: user.email
+        },
         token: token,
-        tokenExpiration: 1
-      }
+        tokenExpiration: 1,
+      };
     } catch (error) {
       throw error;
     }
